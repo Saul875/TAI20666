@@ -2,6 +2,7 @@
 from typing import Optional
 from fastapi import FastAPI,status,HTTPException
 import asyncio
+from pydantic import BaseModel, Field
 
 #Iniciaclización o instancia de la API
 app= FastAPI(
@@ -17,6 +18,11 @@ usuarios=[
     {"id":3,"nombre":"Mauchín","edad":48},
 ]
 
+#Modelo de validacion Pydantic
+class UsuarioBase(BaseModel):
+    id:int = Field(...,gt=0,description="Identificador de usuario", example="1")
+    nombre:str = Field(...,min_length=3, max_length= 50, description="Nombre del usuario")
+    edad:int = Field(...,ge=0, le=121, description= "Edad válida entre 0 y 121")
 
 #Endpoints
 @app.get("/", tags=['Inicio'])
@@ -63,16 +69,16 @@ async def consultaUsuarios():
     }
 
 @app.post("/v1/usuarios/", tags=['CRUD usuarios'])
-async def agregar_usuarios(usuario:dict):
+async def agregar_usuarios(usuario:UsuarioBase):
     for usr in usuarios:
-        if usr["id"] == usuario.get("id"):
+        if usr["id"] == usuario.id:
             raise HTTPException(
              status_code= 400,
              detail= "El ID ya existe xd"
         ) 
     usuarios.append(usuario)
     return{
-        "mensaje":"Usuario agregado exitosamente",
+        "mensaje": "Usuario agregado exitosamente",
         "datos":usuario,
         "status":"200"
     }
@@ -106,5 +112,6 @@ async def eliminar_usuario(id: int):
         status_code=400,
         detail="Usuario no encontrado"
         )
+
 
 #Swagger es lo que se utiliza para la documentación automática
