@@ -1,0 +1,9 @@
+services:
+  api:
+    build: .
+    container_name: server_fastapi_bilbion
+    ports:
+      - "5010:5010"
+    volumes:
+      - ./app:/app/app
+      
