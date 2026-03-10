@@ -90,8 +90,8 @@ async def agregar_usuarios(usuario:UsuarioBase):
     for usr in usuarios:
         if usr["id"] == usuario.id:
             raise HTTPException(
-             status_code= 400,
-             detail= "El ID ya existe xd"
+            status_code= 400,
+            detail= "El ID ya existe xd"
         ) 
     usuarios.append(usuario)
     return{
@@ -99,6 +99,7 @@ async def agregar_usuarios(usuario:UsuarioBase):
         "datos":usuario,
         "status":"200"
     }
+
 
 @app.put("/v1/usuarios/{id}", tags=['CRUD Usuarios'])
 async def actualizar_usuario(id: int, usuario: dict):

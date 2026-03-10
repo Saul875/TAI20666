@@ -1,9 +1,9 @@
 services:
   api:
     build: .
-    container_name: server_fastapi_bilbion
+    container_name: server_fastapi_bilbionn
     ports:
-      - "5000:5000"
+      - "5001:5001"
     volumes:
       - ./app:/app/app
       

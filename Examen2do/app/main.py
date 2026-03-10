@@ -15,9 +15,9 @@ app= FastAPI(
 
 #BD ficticia
 citas=[
-    {"id":1,"cita":"hora", 18:10 ,"nombre":"Juanes","edad":50},
-    {"id":2,"cita":"hora", 19:10 ,"nombre":"Emiliano","edad":21},
-    {"id":3,"cita":"hora", 20:10 ,"nombre":"Mauchín","edad":48},
+    {"id":1,"nombre":"Juanes","edad":50,"motivo":"Dolor de cabeza"},
+    {"id":2,"nombre":"Emiliano","edad":21,"motivo":"Dolor de ojos"},
+    {"id":3,"cita":"hora", 20:10 ,"nombre":"Mauchín","edad":48,"motivo":"Dolor de cadera"},
 ]
 
 #Modelo de validacion Pydantic
@@ -25,12 +25,13 @@ class CitasBase(BaseModel):
     id:int = Field(...,gt=0,description="Identificador de usuario", example="1")
     nombre:str = Field(...,min_length=5, max_length= 50, description="Nombre del usuario")
     edad:int = Field(...,ge=0, le=121, description= "Edad válida entre 0 y 121")
-    fecha:int = Field(..., max_length= 100, description="Motivo no máximo de 100 caracteres")
+    fecha:int = Field(...,ge=0, le=2026)
+    motivo:str = Field(..., max_length= 100, description="Motivo no máximo de 100 caracteres")
 
 security = HTTPBasic()
 
 def verificar_Peticion(credentials: HTTPBasicCredentials = Depends(security)):
-    usaurioAuth = secrets.compare_digest(credentials.username,"SaulSilvaOngay")
+    usaurioAuth = secrets.compare_digest(credentials.username,"Sal")
     contraAuth = secrets.compare_digest(credentials.password,"1234")
 
     if not (usaurioAuth and contraAuth):
@@ -46,7 +47,6 @@ def verificar_Peticion(credentials: HTTPBasicCredentials = Depends(security)):
 @app.get("/", tags=['Inicio'])
 async def holamundo():
     return {"mensaje":"Consultorio Médico"}
-
 
 
 
@@ -67,7 +67,7 @@ async def consultaCitas(id:int):
 
 
 @app.post("/v1/citas/", tags=['CRUD citas'])
-async def agregar_citas(citas:CitasBase):
+async def agregarCitas(citas:CitasBase):
     for usr in citas:
         if usr["id"] == citas.id:
             raise HTTPException(
@@ -89,12 +89,13 @@ async def eliminar_cita(id: int, citasAuth: str = Depends(verificar_Peticion)):
         if usr["id"] == id:
             del citas[idx]
             return {
-                "mensaje": f"Usuario eliminado exitosamente por {citasAuth}",
+                "mensaje": f"Cita eliminado exitosamente por {citasAuth}",
                 "status": "200"
             }
         raise HTTPException(
         status_code=400,
-        detail="Usuario no encontrado"
+        detail="Cita no encontrada"
         )
-    
+
+
 #Swagger es lo que se utiliza para la documentación automática
