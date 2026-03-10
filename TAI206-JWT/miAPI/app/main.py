@@ -122,15 +122,19 @@ async def agregar_usuarios(usuario: UsuarioBase):
     }
 
 @app.put("/v1/usuarios/{id}", tags=['CRUD Usuarios'])
-async def actualizar_usuario(id: int, usuario: dict):
+async def actualizar_usuario(
+    id: int,
+    usuario: dict,
+    usuarioAuth: str = Depends(verificar_token)
+):
     for idx, usr in enumerate(usuarios):
         if usr["id"] == id:
             usuarios[idx] = {**usr, **usuario}
             return {
-                "mensaje": "Usuario actualizado correctamente xd",
+                "mensaje": f"Usuario actualizado correctamente por {usuarioAuth}",
                 "datos": usuarios[idx],
                 "status": "200"
-            }
+}
     raise HTTPException(status_code=400, detail="Usuario no encontrado")
 
 
@@ -143,6 +147,6 @@ async def eliminar_usuario(id: int, usuarioAuth: str = Depends(verificar_token))
                 "mensaje": f"Usuario eliminado exitosamente por {usuarioAuth}",
                 "status": "200"
             }
-        raise HTTPException(status_code=400, detail="Usuario no encontrado xddd")
+    raise HTTPException(status_code=400, detail="Usuario no encontrado xddd")
 
 # Swagger es lo que se utiliza para la documentación automática

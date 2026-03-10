@@ -67,8 +67,8 @@ async def consultaOp(id: Optional[int]=None):
         for usuario in usuarios: #Se busca usuario en el diccionario de usuarios
             if usuario["id"]== id:
                 return { "Usuario encontrado":id,
-                         "Datos": usuario 
-                         }
+                        "Datos": usuario 
+                        }
             
         return {"Mensaje":"Usuario no encontrado"}
     

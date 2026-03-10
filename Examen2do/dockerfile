@@ -1,0 +1,20 @@
+FROM python:3.12-slim
+
+#crear carpeta de trabajo
+WORKDIR /app
+
+#Copia de los requerimientos
+COPY requirements.txt . 
+#con ese punto se le dice ejecutalo de una vez
+
+#Instalar: --no-cache-dir: es para que no guarde nada en cache y la -r es para que remueva todo lo restante y al final desde donde queremos que lo tome
+RUN pip install --no-cache-dir -r requirements.txt
+
+#copiar el código del proyecto: se le especifica de donde se toma y después con qué nombre queremos que se cree la carpeta
+COPY ./app ./app 
+
+#Exponer el puerto del contenedor
+EXPOSE 5000
+
+#Comandos para ejecutar FASTAPI
+CMD ["uvicorn","app.main:app","--host","0.0.0.0","--port","5000","--reload"]
